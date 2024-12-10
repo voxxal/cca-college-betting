@@ -1,0 +1,36 @@
+<div class="flex items-end justify-between mb-2">
+  <h1 class="text-5xl font-bold font-display"><%= @user.name %></h1>
+  <.link navigate={~p"/profile/edit"}>
+    <.button :if={@me}>Edit</.button>
+  </.link>
+</div>
+<div class="grid items-center grid-cols-[1fr_0_1fr_0] text-sm md:flex md:gap-2 text-zinc-500">
+  <%= raw(
+    [
+      {"Unweighted GPA", @user.gpa},
+      {"Weighted GPA", @user.weighted_gpa},
+      {"SAT Score", @user.sat_score},
+      {"ACT Score", @user.act_score}
+    ]
+    |> Enum.filter(&(elem(&1, 1) != nil))
+    |> Enum.map(fn {a, b} -> "<div>#{a}: #{b}</div>" end)
+    |> Enum.join(" <div class='md:w-1.5 md:h-1.5 rounded-full bg-zinc-500'></div> ")
+  ) %>
+</div>
+<.table
+  id="markets"
+  rows={@user.markets}
+  row_click={fn %{college: college} -> JS.navigate(~p"/#{@user.id}/#{college.id}") end}
+>
+  <:col :let={market} label="College Name"><%= market.college.name %></:col>
+  <:col :let={market} label="Acceptance Rate">
+    <%= case market.resolution do %>
+      <% nil -> %>
+        <%= CcaCollegeBetting.Payout.acceptance_rate_formatted(market) %>%
+      <% false -> %>
+        <span class="font-black text-red-600 font-display">Rejected</span>
+      <% true -> %>
+        <span class="font-black text-green-600 font-display">Accepted</span>
+    <% end %>
+  </:col>
+</.table>

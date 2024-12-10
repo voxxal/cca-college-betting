@@ -1,0 +1,13 @@
+<div class="text-center">
+  <h1 class="text-4xl font-bold font-display">This Profile is Private</h1>
+  <p class="mt-2 mb-4">
+    You can request access to the profile. They will need to accept your request.
+  </p>
+  <%= if @whitelist_entry == nil do %>
+    <.link href={~p"/#{@user.id}/request"} method="PUT">
+      <.button>Request Access</.button>
+    </.link>
+  <% else %>
+    <.button class="cursor-not-allowed" disabled>Requested Access</.button>
+  <% end %>
+</div>

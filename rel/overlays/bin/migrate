@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+cd -P -- "$(dirname -- "$0")"
+exec ./cca_college_betting eval CcaCollegeBetting.Release.migrate

@@ -1,0 +1,94 @@
+<div class="z-10 min-h-screen bg-white mb-96 md:mb-40">
+  <nav
+    class="flex items-center justify-between max-w-4xl p-4 m-auto text-lg border-b border-zinc-200"
+    x-data="{ open: false }"
+    id="nav"
+  >
+    <div class="flex gap-4">
+      <.link navigate={~p"/"} class="flex items-center gap-2">
+        <%!-- "🗑️", "🦝",  --%>
+        <div><%= Enum.random(["🐦", "🐦‍⬛", "🎓"]) %></div>
+        <div class="font-bold font-display">CCB</div>
+      </.link>
+      <.link href={~p"/search"} class="flex items-center justify-center">
+        <.icon name="hero-magnifying-glass" class="w-6 h-6" />
+      </.link>
+    </div>
+
+    <ul class="flex items-center justify-center">
+      <button @click="open = !open" class="md:hidden">
+        <.icon name="hero-bars-3" class="w-6 h-6" />
+      </button>
+      <div
+        class="absolute left-0 z-50 items-center justify-center hidden w-full gap-2 font-medium bg-white md:flex font-display md:static top-16"
+        x-bind:class="open ? '!flex' : ''"
+      >
+        <%= if @current_user do %>
+          <li class="transition rounded-md text-zinc-900 bg-zinc-100 hover:bg-zinc-200 group">
+            <.link href={~p"/profile"} class="flex">
+              <span class="px-2">
+                <%= @current_user.name %>
+              </span>
+              <span class="flex items-center gap-1 px-2 transition rounded-md bg-zinc-200 group-hover:bg-zinc-300">
+                ℂ
+                <div>
+                  <%= (@current_user.credits / 100)
+                  |> CcaCollegeBetting.Payout.currency_formatted() %>
+                </div>
+              </span>
+            </.link>
+          </li>
+          <li>
+            <.link href={~p"/users/settings"} class="flex items-center justify-center">
+              <.icon name="hero-cog-6-tooth-solid" class="w-6 h-6" />
+            </.link>
+          </li>
+          <li>
+            <.link href={~p"/users/log_out"} method="delete">
+              <.button>Log out</.button>
+            </.link>
+          </li>
+        <% else %>
+          <li>
+            <.link href={~p"/users/register"}>
+              <.button class="bg-red-500 hover:bg-red-400">Register</.button>
+            </.link>
+          </li>
+          <li>
+            <.link href={~p"/users/log_in"}>
+              <.button>Log in</.button>
+            </.link>
+          </li>
+        <% end %>
+      </div>
+    </ul>
+  </nav>
+
+  <main class="px-4 py-16 sm:px-6 lg:px-8">
+    <div class="max-w-4xl px-4 mx-auto">
+      <.flash_group flash={@flash} />
+      <%= @inner_content %>
+    </div>
+  </main>
+</div>
+<footer class="fixed bottom-0 flex flex-col justify-between w-full p-8 md:items-center h-72 md:h-40 md:flex-row bg-gradient-to-b from-zinc-50 to-zinc-100 text-zinc-500 -z-10">
+  <div class="md:pl-8">
+    <div class="flex items-center gap-1">
+      <div>Made with &lt;3 by</div>
+      <a href="https://voxal.dev" target="_blank">
+        <img src="/images/wordmark-grayscale.svg" class="inline h-6" />
+      </a>
+    </div>
+    CCA College Betting is not affiliated with Canyon Crest Academy.<br />
+    CCA is not an abbreviation of anything.
+  </div>
+  <div class="md:pr-8 md:text-right">
+    <.link navigate="/faq" class="hover:underline">FAQ</.link>
+    <div class="mt-1">
+      Contact Us: <br />
+      <a href="mailto:contact@ccacollegebetting.com" class="hover:underline">
+        contact@ccacollegebetting.com
+      </a>
+    </div>
+  </div>
+</footer>
