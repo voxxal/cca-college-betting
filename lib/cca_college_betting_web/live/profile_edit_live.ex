@@ -151,6 +151,7 @@ defmodule CcaCollegeBettingWeb.ProfileEditLive do
 
     socket =
       socket
+      |> assign(:page_title, "Profile Settings")
       |> assign(:profile_form, to_form(profile_changeset))
       |> assign(:user, user)
       |> assign(:college_list, Cache.get(:colleges))
@@ -193,25 +194,32 @@ defmodule CcaCollegeBettingWeb.ProfileEditLive do
     # TODO refund everyone
     market = Repo.get!(Bets.Market, socket.assigns.market_to_delete) |> Repo.preload([:user])
 
-    if market.user.id == user.id do
-      case Repo.delete(market) do
-        {:ok, _} ->
-          {:noreply,
-           socket
-           |> assign(:user, user |> Repo.preload(markets: :college))
-           |> put_flash(:info, "College sucessfully deleted.")}
+    cond do
+      market.user.id == user.id && market.resolution == nil ->
+        case Repo.delete(market) do
+          {:ok, _} ->
+            {:noreply,
+             socket
+             |> assign(:user, user |> Repo.preload(markets: :college))
+             |> put_flash(:info, "College sucessfully deleted.")}
 
-        {:err, _} ->
-          {:noreply,
-           socket
-           |> assign(:user, user |> Repo.preload(markets: :college))
-           |> put_flash(:error, "Failed to delete college, does it still exist?")}
-      end
-    else
-      {:noreply,
-       socket
-       |> put_flash(:error, "Cannot delete market not owned by you.")
-       |> redirect(~p"/profile")}
+          {:err, _} ->
+            {:noreply,
+             socket
+             |> assign(:user, user |> Repo.preload(markets: :college))
+             |> put_flash(:error, "Failed to delete college, does it still exist?")}
+        end
+
+      market.resolution != nil ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Cannot delete market that has already resolved.")}
+
+      market.user.id != user.id ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Cannot delete market not owned by you.")
+         |> redirect(~p"/profile")}
     end
   end
 

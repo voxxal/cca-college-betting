@@ -177,6 +177,7 @@ defmodule CcaCollegeBettingWeb.ProfileOnboardingLive do
 
     socket =
       socket
+      |> assign(:page_title, "Onboarding")
       |> assign(:profile_form, to_form(profile_changeset))
       |> assign(:user, user |> Repo.preload(markets: [:college, :user]))
       |> assign(:college_list, Cache.get(:colleges))

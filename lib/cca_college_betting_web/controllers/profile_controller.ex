@@ -14,6 +14,8 @@ defmodule CcaCollegeBettingWeb.ProfileController do
       else
         false
       end
+    conn = assign(conn, :page_title, user.name)
+
 
     if Accounts.accepted(user, conn.assigns.current_user) do
       render(conn, :show, user: user, me: me)

@@ -33,4 +33,8 @@
         <span class="font-black text-green-600 font-display">Accepted</span>
     <% end %>
   </:col>
+  <:col :let={market} label="Volume">
+    ℂ<%= (CcaCollegeBetting.Payout.total_volume(market) / 100)
+    |> CcaCollegeBetting.Payout.currency_formatted() %>
+  </:col>
 </.table>

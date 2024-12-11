@@ -30,6 +30,7 @@ defmodule CcaCollegeBettingWeb.UserSearchLive do
 
     socket =
       socket
+      |> assign(:page_title, "Search")
       |> assign(:users_list, users_list)
       |> assign(:users_filtered, users_list)
 

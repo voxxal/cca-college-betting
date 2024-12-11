@@ -11,7 +11,7 @@ defmodule CcaCollegeBettingWeb.UserRegistrationLive do
         Register for an account
         <:subtitle>
           Already registered?
-          <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
+          <.link navigate={~p"/users/log_in"} class="font-semibold text-red-500 hover:underline">
             Log in
           </.link>
           to your account now.
@@ -34,13 +34,13 @@ defmodule CcaCollegeBettingWeb.UserRegistrationLive do
 
         <.input field={@form[:email]} type="email" label="Personal Email" required />
         <.input field={@form[:school_email]} type="email" label="School Email" required />
-        <div class="p-8 -mx-24 rounded-lg bg-zinc-100">
+        <div class="p-8 rounded-lg md:-mx-24 bg-zinc-100">
           <h2 class="mb-2 text-xl font-bold font-display">Verify your school email</h2>
           <p>
             Send an email <strong>with your school email</strong>
             to the following email address to verify your email
           </p>
-          <div class="p-2 font-mono bg-white border rounded-md border-zinc-200">
+          <div class="p-2 overflow-x-scroll font-mono bg-white border rounded-md border-zinc-200">
             <%= @verification_id %>@ccacollegebetting.com
           </div>
           <div class="mt-2">
@@ -108,7 +108,7 @@ defmodule CcaCollegeBettingWeb.UserRegistrationLive do
     changeset =
       Accounts.change_user_registration(%User{}, user_params, socket.assigns[:emails_verified])
 
-    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
+    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate)) |> assign(:page_title, "Register")}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do

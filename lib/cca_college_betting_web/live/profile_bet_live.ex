@@ -52,7 +52,7 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
     ~H"""
     <div>
       <.back navigate={~p"/#{@market.user.id}"}>Back to profile</.back>
-      <div class="grid grid-cols-2 gap-8 p-8 mb-8 -mx-8 rounded-lg bg-zinc-100">
+      <div class="grid gap-8 p-8 mb-8 -mx-8 rounded-lg md:grid-cols-2 bg-zinc-100">
         <div class="flex flex-col gap-4 font-display">
           <h1 class="mb-2 text-5xl font-black"><%= @market.user.name %></h1>
           <h2 class="text-4xl font-black"><%= @market.college.name %></h2>
@@ -178,7 +178,7 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
       <h2>
         Market Volume:
         <span class="font-bold">
-          <%= (@market.bets |> Enum.reduce(0, fn bet, acc -> acc + bet.volume end)) / 100 %>
+          ℂ<%= (Payout.total_volume(@market) / 100) |> Payout.currency_formatted() %>
         </span>
       </h2>
       <.table id="bets" rows={@market.bets}>
@@ -202,7 +202,7 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
          socket.assigns.current_user
        ) do
       market =
-        Bets.get_market_by_ids(user_id, college_id)
+        Bets.get_market_by_ids!(user_id, college_id)
         |> Repo.preload([:user, :college, bets: :user])
 
       my_bet =
@@ -222,6 +222,7 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
 
       socket =
         socket
+        |> assign(:page_title, "#{market.user.name} · #{market.college.name}")
         |> assign(:bet_form, to_form(bet_changeset))
         |> assign(:market, market)
         |> assign(:my_bet, my_bet)

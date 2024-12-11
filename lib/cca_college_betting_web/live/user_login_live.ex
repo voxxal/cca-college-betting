@@ -8,7 +8,7 @@ defmodule CcaCollegeBettingWeb.UserLoginLive do
         Log in to account
         <:subtitle>
           Don't have an account?
-          <.link navigate={~p"/users/register"} class="font-semibold text-brand hover:underline">
+          <.link navigate={~p"/users/register"} class="font-semibold text-red-500 hover:underline">
             Sign up
           </.link>
           for an account now.
@@ -38,6 +38,6 @@ defmodule CcaCollegeBettingWeb.UserLoginLive do
   def mount(_params, _session, socket) do
     email = Phoenix.Flash.get(socket.assigns.flash, :email)
     form = to_form(%{"email" => email}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
+    {:ok, assign(socket, form: form, page_title: "Log In"), temporary_assigns: [form: form]}
   end
 end

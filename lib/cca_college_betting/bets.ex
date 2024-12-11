@@ -13,7 +13,7 @@ defmodule CcaCollegeBetting.Bets do
     Repo.insert(%Market{bets: [], college_id: college_id, user: user})
   end
 
-  def get_market_by_ids(user_id, college_id) when is_binary(user_id) do
+  def get_market_by_ids!(user_id, college_id) when is_binary(user_id) do
     Repo.get_by(Market, user_id: user_id, college_id: college_id)
   end
 
