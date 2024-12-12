@@ -25,6 +25,9 @@ defmodule CcaCollegeBetting.Accounts.User do
     field :sat_score, :integer
     field :act_score, :integer
 
+    field :major, :string
+    field :supplements, :string
+
     field :private, :boolean
     has_many :whitelist, WhitelistEntry
 
@@ -65,11 +68,34 @@ defmodule CcaCollegeBetting.Accounts.User do
 
   def profile_changeset(user, attrs) do
     user
-    |> cast(attrs, ~w[gender gpa weighted_gpa sat_score act_score private]a)
+    |> cast(attrs, ~w[gender gpa weighted_gpa sat_score act_score private major supplements]a)
     |> validate_number(:gpa, greater_than_or_equal_to: 0, less_than_or_equal_to: 4)
     |> validate_number(:weighted_gpa, greater_than_or_equal_to: 0, less_than_or_equal_to: 5)
     |> validate_number(:sat_score, greater_than_or_equal_to: 0, less_than_or_equal_to: 1600)
     |> validate_number(:act_score, greater_than_or_equal_to: 1, less_than_or_equal_to: 36)
+    |> validate_url(:supplements)
+  end
+
+  def validate_url(changeset, field, opts \\ []) do
+    validate_change(changeset, field, fn _, value ->
+      case URI.parse(value) do
+        %URI{scheme: nil} ->
+          "is missing a scheme (e.g. https)"
+
+        %URI{host: nil} ->
+          "is missing a host"
+
+        %URI{host: host} ->
+          case :inet.gethostbyname(Kernel.to_charlist(host)) do
+            {:ok, _} -> nil
+            {:error, _} -> "invalid host"
+          end
+      end
+      |> case do
+        error when is_binary(error) -> [{field, Keyword.get(opts, :message, error)}]
+        _ -> []
+      end
+    end)
   end
 
   def college_changeset(user, attrs) do

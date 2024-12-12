@@ -92,7 +92,10 @@ defmodule CcaCollegeBetting.Accounts do
 
   """
   def change_user_registration(%User{} = user, attrs \\ %{}, verified_emails \\ []) do
-    User.registration_changeset(user, attrs, verified_emails, hash_password: false, validate_email: false)
+    User.registration_changeset(user, attrs, verified_emails,
+      hash_password: false,
+      validate_email: false
+    )
   end
 
   ## Settings
@@ -384,12 +387,14 @@ defmodule CcaCollegeBetting.Accounts do
   end
 
   def accepted(user, member) do
-    user = user |> Repo.preload(:whitelist)
+    if !user.private or member.id == user.id do
+      true
+    else
+      user = user |> Repo.preload(:whitelist)
 
-    !user.private or
-      member.id == user.id or
       !!(user.whitelist
          |> Enum.find(&(member.id == &1.member_id and &1.status == :accepted)))
+    end
   end
 
   def create_whitelist_entry(user_id, member_id) do

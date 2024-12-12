@@ -41,19 +41,28 @@ defmodule CcaCollegeBetting.Bets do
     end
   end
 
-  def resolve_market(market, resolution) when is_boolean(resolution) do
+  def resolve_market(market, resolution) when is_atom(resolution) do
     market = market |> Repo.preload([:user, :college, bets: :user])
     changeset = market |> Market.resolution_changeset(resolution)
 
     case Repo.update(changeset) do
       {:ok, updated_market} ->
-        if resolution do
-          from(u in User,
-            join: b in Bet,
-            on: u.id == b.user_id and b.market_id == ^market.id,
-            update: [inc: [credits: b.payout]]
-          )
-          |> Repo.update_all([])
+        case resolution do
+          :accepted ->
+            from(u in User,
+              join: b in Bet,
+              on: u.id == b.user_id and b.market_id == ^market.id,
+              update: [inc: [credits: b.payout]]
+            )
+            |> Repo.update_all([])
+
+          :withdrawn ->
+            from(u in User,
+              join: b in Bet,
+              on: u.id == b.user_id and b.market_id == ^market.id,
+              update: [inc: [credits: b.volume]]
+            )
+            |> Repo.update_all([])
         end
 
         {:ok, updated_market}

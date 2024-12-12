@@ -1,5 +1,7 @@
 defmodule CcaCollegeBettingWeb.UserSearchLive do
   alias CcaCollegeBetting.Cache
+  alias CcaCollegeBetting.Payout
+  alias CcaCollegeBetting.Accounts
   use CcaCollegeBettingWeb, :live_view
 
   def render(assigns) do
@@ -17,9 +19,25 @@ defmodule CcaCollegeBettingWeb.UserSearchLive do
       <.table
         id="users_filtered"
         rows={@users_filtered}
-        row_click={fn {id, _} -> JS.navigate(~p"/#{id}") end}
+        row_click={fn %{id: id} -> JS.navigate(~p"/#{id}") end}
       >
-        <:col :let={user} label="Name"><%= elem(user, 1) %></:col>
+        <:col :let={user} label="Name">
+          <div class="w-72"><%= user.name %></div>
+        </:col>
+        <:col :let={user} label="Colleges">
+          <%= if Accounts.accepted(Accounts.get_user!(user.id), @current_user) do
+            user.college_count
+          else
+            "-"
+          end %>
+        </:col>
+        <:col :let={user} label="Total Bet Volume">
+          ℂ<%= if Accounts.accepted(Accounts.get_user!(user.id), @current_user) do
+            (user.bet_volume / 100) |> Payout.currency_formatted()
+          else
+            "-"
+          end %>
+        </:col>
       </.table>
     </div>
     """
@@ -44,7 +62,7 @@ defmodule CcaCollegeBettingWeb.UserSearchLive do
   def handle_event("user_search", %{"user_search" => user_search}, socket) do
     users_filtered =
       socket.assigns.users_list
-      |> Seqfuzz.filter(user_search, &elem(&1, 1))
+      |> Seqfuzz.filter(user_search, & &1.name)
 
     {:noreply,
      socket

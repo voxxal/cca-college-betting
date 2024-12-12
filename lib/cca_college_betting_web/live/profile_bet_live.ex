@@ -63,10 +63,12 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
                 <span class={[acceptance_rate_color(@market), "font-black"]}>
                   <%= acceptance_rate_formatted(@market) %>%
                 </span>
-              <% false -> %>
-                Resolution: <span class="font-black text-red-600">Rejected</span>
-              <% true -> %>
-                Resolution: <span class="font-black text-green-600">Accepted</span>
+              <% :rejected -> %>
+                Resolution: <span class="font-black text-red-600 font-display">Rejected</span>
+              <% :accepted -> %>
+                Resolution: <span class="font-black text-green-600 font-display">Accepted</span>
+              <% :withdrawn -> %>
+                Resolution: <span class="font-black text-black font-display">Withdrawn</span>
             <% end %>
           </h3>
         </div>
@@ -153,16 +155,19 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
             <div :if={@show_resolve_buttons} class="mt-auto">
               <div class="flex gap-2 mb-2">
                 <.button
-                  phx-click={JS.push("resolve_true")}
+                  phx-click={JS.push("resolve_accepted")}
                   class="flex-1 bg-green-500 hover:bg-green-600"
                 >
                   Accepted
                 </.button>
                 <.button
-                  phx-click={JS.push("resolve_false")}
+                  phx-click={JS.push("resolve_rejected")}
                   class="flex-1 bg-red-500 hover:bg-red-600"
                 >
                   Rejected
+                </.button>
+                <.button phx-click={JS.push("resolve_withdrawn")} class="flex-1 bg-black">
+                  Withdrawn
                 </.button>
               </div>
               <.button phx-click={JS.push("hide_resolve_buttons")} class="w-full">
@@ -322,10 +327,10 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
            socket
            |> put_flash(
              :info,
-             if resolution do
-               "Market resolved, congrats on getting in!"
-             else
-               "Market resolved, nice try :("
+             case resolution do
+               :rejected -> "Market resolved, nice try :("
+               :accepted -> "Market resolved, congrats on getting in!"
+               :withdrawn -> "Market resolved."
              end
            )
            |> assign(:market, updated_market)}

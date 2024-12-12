@@ -8,10 +8,10 @@ defmodule CcaCollegeBetting.Bets.Market do
     belongs_to :user, User, type: :string
     has_many :bets, Bet
 
-    field :resolution, :boolean, default: nil
+    field :resolution, Ecto.Enum, values: [:accepted, :rejected, :withdrawn], default: nil
   end
 
-  def resolution_changeset(market, resolution) when is_boolean(resolution) do
+  def resolution_changeset(market, resolution) when is_atom(resolution) do
     market |> change() |> put_change(:resolution, resolution)
   end
 

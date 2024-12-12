@@ -49,6 +49,11 @@ defmodule CcaCollegeBettingWeb.ProfileEditLive do
               <.input field={@profile_form[:act_score]} type="number" label="ACT Composite Score" />
             </div>
 
+            <div class="grid grid-cols-2 gap-4">
+              <.input field={@profile_form[:major]} type="text" label="Planned Major" />
+              <.input field={@profile_form[:supplements]} type="text" label="Link to supplemental materials" />
+            </div>
+
             <div class="grid items-center justify-center gap-4 md:grid-cols-2">
               <p>
                 Private accounts do not let everyone view or bet on them. People may request to view or bet, but you must allow them to.

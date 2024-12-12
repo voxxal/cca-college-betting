@@ -5,8 +5,11 @@
   </.link>
 </div>
 <div class="grid items-center grid-cols-[1fr_0_1fr_0] text-sm md:flex md:gap-2 text-zinc-500">
+  <a :if={@user.supplements} href={@user.supplements} target="_blank" class="underline">Supplementals </a>
+  <div :if={@user.supplements} class="md:w-1.5 md:h-1.5 rounded-full bg-zinc-500"></div>
   <%= raw(
     [
+      {"Planned Major", @user.major},
       {"Unweighted GPA", @user.gpa},
       {"Weighted GPA", @user.weighted_gpa},
       {"SAT Score", @user.sat_score},
@@ -27,10 +30,12 @@
     <%= case market.resolution do %>
       <% nil -> %>
         <%= CcaCollegeBetting.Payout.acceptance_rate_formatted(market) %>%
-      <% false -> %>
+      <% :rejected -> %>
         <span class="font-black text-red-600 font-display">Rejected</span>
-      <% true -> %>
+      <% :accepted -> %>
         <span class="font-black text-green-600 font-display">Accepted</span>
+      <% :withdrawn -> %>
+        <span class="font-black text-black font-display">Withdrawn</span>
     <% end %>
   </:col>
   <:col :let={market} label="Volume">
