@@ -40,7 +40,7 @@ defmodule CcaCollegeBetting.Payout do
     volume_factor = max(1.0 / max(0.7, (market_volume + 500_00) / 1000_00), 1.0)
 
     if volume > 100_00 do
-      volume_factor * acceptance_factor * 100 + 0.5 * acceptance_factor * (volume - 100)
+      volume_factor * acceptance_factor * 100_00 + 0.5 * acceptance_factor * (volume - 100)
     else
       volume_factor * acceptance_factor * volume
     end

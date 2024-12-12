@@ -40,8 +40,11 @@ defmodule CcaCollegeBettingWeb.UserRegistrationLive do
             Send an email <strong>with your school email</strong>
             to the following email address to verify your email
           </p>
-          <div class="p-2 overflow-x-scroll font-mono bg-white border rounded-md border-zinc-200">
-            <%= @verification_id %>@ccacollegebetting.com
+          <div class="flex p-2 font-mono bg-white border rounded-md border-zinc-200">
+            <div id="verification-email" class="flex-1 overflow-x-scroll"><%= @verification_id %>@ccacollegebetting.com</div>
+            <button phx-click={JS.dispatch("phx:copy", to: "#verification-email")}>
+              <.icon name="hero-clipboard" class="w-5 h-5" />
+            </button>
           </div>
           <div class="mt-2">
             <%= if @emails_verified == []  do %>
@@ -72,6 +75,8 @@ defmodule CcaCollegeBettingWeb.UserRegistrationLive do
 
     socket =
       socket
+      |> assign(:page_title, "Register")
+      |> assign(user_params: %{})
       |> assign(trigger_submit: false, check_errors: false)
       |> assign_form(changeset)
       |> assign(emails_verified: [])
@@ -108,7 +113,9 @@ defmodule CcaCollegeBettingWeb.UserRegistrationLive do
     changeset =
       Accounts.change_user_registration(%User{}, user_params, socket.assigns[:emails_verified])
 
-    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate)) |> assign(:page_title, "Register")}
+    {:noreply,
+     assign_form(socket, Map.put(changeset, :action, :validate))
+     |> assign(user_params: user_params)}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
@@ -122,9 +129,16 @@ defmodule CcaCollegeBettingWeb.UserRegistrationLive do
   end
 
   def handle_info(msg, socket) do
-    IO.inspect([msg.payload | socket.assigns[:emails_verified]])
+    new_emails_verified = [msg.payload | socket.assigns[:emails_verified]]
 
-    {:noreply,
-     socket |> assign(emails_verified: [msg.payload | socket.assigns[:emails_verified]])}
+    changeset =
+      Accounts.change_user_registration(
+        %User{},
+        socket.assigns[:user_params],
+        new_emails_verified
+      )
+      |> Map.put(:action, :validate)
+
+    {:noreply, socket |> assign(emails_verified: new_emails_verified) |> assign_form(changeset)}
   end
 end

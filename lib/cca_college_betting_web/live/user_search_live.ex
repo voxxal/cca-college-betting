@@ -19,7 +19,7 @@ defmodule CcaCollegeBettingWeb.UserSearchLive do
         rows={@users_filtered}
         row_click={fn {id, _} -> JS.navigate(~p"/#{id}") end}
       >
-        <:col :let={user}><%= elem(user, 1) %></:col>
+        <:col :let={user} label="Name"><%= elem(user, 1) %></:col>
       </.table>
     </div>
     """

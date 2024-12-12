@@ -90,7 +90,7 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
                     value={@bet_form[:volume].value / 100}
                     type="number"
                     step="0.01"
-                    max="100"
+                    max="200"
                     min="0"
                     show_errors={false}
                   />

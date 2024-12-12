@@ -27,8 +27,10 @@ defmodule CcaCollegeBetting.Bets.Bet do
         greater_than_or_equal_to: bet.volume,
         message: "Must be greater than previous bet of #{bet.volume / 100}"
       )
+      # volume < bet.user.credits + old_volume
+
       |> validate_number(:volume,
-        less_than_or_equal_to: bet.user.credits,
+        less_than_or_equal_to: bet.user.credits + bet.volume,
         message: "Not enough credits"
       )
       |> validate_number(:volume, less_than_or_equal_to: 200_00, message: "Max bet of 200")
