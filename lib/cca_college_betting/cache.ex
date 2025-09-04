@@ -52,10 +52,17 @@ defmodule CcaCollegeBetting.Cache do
   def fetch_users() do
     Repo.all(
       from u in "users",
-        left_join: m in "markets", on: u.id == m.user_id,
-        left_join: b in "bets", on: m.id == b.market_id,
+        left_join: m in "markets",
+        on: u.id == m.user_id,
+        left_join: b in "bets",
+        on: m.id == b.market_id,
         group_by: [u.id, u.name],
-        select: %{id: u.id, name: u.name, college_count: count(m.college_id), bet_volume: coalesce(sum(b.volume), 0)}
+        select: %{
+          id: u.id,
+          name: u.name,
+          college_count: count(m.college_id, :distinct),
+          bet_volume: coalesce(sum(b.volume), 0)
+        }
     )
   end
 end

@@ -32,8 +32,8 @@ defmodule CcaCollegeBettingWeb.UserSearchLive do
           end %>
         </:col>
         <:col :let={user} label="Total Bet Volume">
-          ℂ<%= if Accounts.accepted(Accounts.get_user!(user.id), @current_user) do
-            (user.bet_volume / 100) |> Payout.currency_formatted()
+          <%= if Accounts.accepted(Accounts.get_user!(user.id), @current_user) do
+            "ℂ" <> ((user.bet_volume / 100) |> Payout.currency_formatted())
           else
             "-"
           end %>

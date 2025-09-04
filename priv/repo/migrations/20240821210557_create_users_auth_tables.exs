@@ -72,7 +72,7 @@ defmodule CcaCollegeBetting.Repo.Migrations.CreateUsersAuthTables do
     create unique_index(:markets, [:college_id, :user_id])
 
     create table(:bets) do
-      add :market_id, references(:markets), null: false
+      add :market_id, references(:markets, on_delete: :delete_all), null: false
       add :user_id, references(:users, on_delete: :delete_all, type: :citext), null: false
       add :volume, :integer, null: false
       add :payout, :integer, null: false

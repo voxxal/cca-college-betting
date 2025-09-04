@@ -24,10 +24,17 @@ defmodule CcaCollegeBetting.Payout do
   end
 
   def total_volume(market) do
-    market = market |> Repo.preload([:college, :user, :bets])
+    market = market |> Repo.preload(:bets)
 
     market.bets |> Enum.reduce(0, fn bet, acc -> acc + bet.volume end)
   end
+
+  def total_payout(market) do
+    market = market |> Repo.preload(:bets)
+
+    market.bets |> Enum.reduce(0, fn bet, acc -> acc + bet.payout end)
+  end
+
 
   def payout(market, volume) do
     market = market |> Repo.preload([:college, :user, :bets])

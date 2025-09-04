@@ -51,7 +51,11 @@ defmodule CcaCollegeBettingWeb.ProfileEditLive do
 
             <div class="grid grid-cols-2 gap-4">
               <.input field={@profile_form[:major]} type="text" label="Planned Major" />
-              <.input field={@profile_form[:supplements]} type="text" label="Link to supplemental materials" />
+              <.input
+                field={@profile_form[:supplements]}
+                type="text"
+                label="Link to supplemental materials"
+              />
             </div>
 
             <div class="grid items-center justify-center gap-4 md:grid-cols-2">
@@ -201,18 +205,21 @@ defmodule CcaCollegeBettingWeb.ProfileEditLive do
 
     cond do
       market.user.id == user.id && market.resolution == nil ->
-        case Repo.delete(market) do
-          {:ok, _} ->
-            {:noreply,
-             socket
-             |> assign(:user, user |> Repo.preload(markets: :college))
-             |> put_flash(:info, "College sucessfully deleted.")}
+        case Bets.resolve_market(market, :withdrawn) do
+          {:ok, updated_market} ->
+            case Repo.delete(updated_market) do
+              {:ok, _} ->
+                {:noreply,
+                 socket
+                 |> assign(:user, user |> Repo.preload(markets: :college))
+                 |> put_flash(:info, "College sucessfully deleted.")}
 
-          {:err, _} ->
-            {:noreply,
-             socket
-             |> assign(:user, user |> Repo.preload(markets: :college))
-             |> put_flash(:error, "Failed to delete college, does it still exist?")}
+              {:err, _} ->
+                {:noreply,
+                 socket
+                 |> assign(:user, user |> Repo.preload(markets: :college))
+                 |> put_flash(:error, "Failed to delete college, does it still exist?")}
+            end
         end
 
       market.resolution != nil ->

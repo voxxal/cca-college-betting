@@ -1,6 +1,7 @@
 defmodule CcaCollegeBetting.Accounts.User do
   alias CcaCollegeBetting.Repo
   alias CcaCollegeBetting.Bets.Market
+  alias CcaCollegeBetting.Bets.Bet
   alias CcaCollegeBetting.Accounts.{Whitelist, WhitelistEntry}
   use Ecto.Schema
   import Ecto.Changeset
@@ -19,6 +20,7 @@ defmodule CcaCollegeBetting.Accounts.User do
     field :credits, :integer
 
     has_many :markets, Market
+    has_many :bets, Bet
 
     field :gpa, :float
     field :weighted_gpa, :float

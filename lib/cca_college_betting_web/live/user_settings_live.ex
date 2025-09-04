@@ -74,6 +74,35 @@ defmodule CcaCollegeBettingWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
+      <div class="space-y-12">
+        <div>
+          <h1 class="mt-4 text-2xl font-bold text-center">The Danger Zone</h1>
+          <h2 class="text-center">These actions are irreversible!! </h2>
+        </div>
+        <.button
+          class="bg-red-500 hover:bg-red-600"
+          phx-click={JS.push("confirm_delete") |> show_modal("confirm_delete")}
+          phx-value-action="colleges"
+        >
+          Delete ALL colleges
+        </.button>
+
+        <.button
+          class="bg-red-500 hover:bg-red-600"
+          phx-click={JS.push("confirm_delete") |> show_modal("confirm_delete")}
+          phx-value-action="colleges"
+        >
+          Delete ENTIRE account
+        </.button>
+      </div>
+      <.modal
+        id="confirm_delete"
+        on_confirm={JS.push("delete_market") |> hide_modal("confirm_delete")}
+      >
+        Are you sure you want to remove this college? Any bets made will NOT be refunded.
+        <:confirm>OK</:confirm>
+        <:cancel>Cancel</:cancel>
+      </.modal>
     </div>
     """
   end

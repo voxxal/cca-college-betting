@@ -186,6 +186,13 @@ defmodule CcaCollegeBettingWeb.ProfileBetLive do
           ℂ<%= (Payout.total_volume(@market) / 100) |> Payout.currency_formatted() %>
         </span>
       </h2>
+      <h2>
+        Market Cap:
+        <span class="font-bold">
+          ℂ<%= (Payout.total_payout(@market) / 100) |> Payout.currency_formatted() %>
+        </span>
+      </h2>
+
       <.table id="bets" rows={@market.bets}>
         <:col :let={bet} label="Name">
           <.link navigate={~p"/#{bet.user.id}"} class="hover:underline"><%= bet.user.name %></.link>

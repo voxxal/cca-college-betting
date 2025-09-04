@@ -5,7 +5,9 @@
   </.link>
 </div>
 <div class="grid items-center grid-cols-[1fr_0_1fr_0] text-sm md:flex md:gap-2 text-zinc-500">
-  <a :if={@user.supplements} href={@user.supplements} target="_blank" class="underline">Supplementals </a>
+  <a :if={@user.supplements} href={@user.supplements} target="_blank" class="underline">
+    Supplementals
+  </a>
   <div :if={@user.supplements} class="md:w-1.5 md:h-1.5 rounded-full bg-zinc-500"></div>
   <%= raw(
     [
@@ -43,3 +45,38 @@
     |> CcaCollegeBetting.Payout.currency_formatted() %>
   </:col>
 </.table>
+
+<%= if @current_user.id == @user.id do %>
+  <h2 class="mt-32 -mb-5 text-3xl font-bold font-display">Your bets</h2>
+  <.table
+    id="markets"
+    rows={@user.bets}
+    row_click={
+      fn %{market: %{user_id: user_id, college_id: college_id}} ->
+        JS.navigate(~p"/#{user_id}/#{college_id}")
+      end
+    }
+  >
+    <:col :let={bet} label="College Name">
+      <%= bet.market.user.name %> /
+      <span class="font-normal"><%= bet.market.college.name %></span>
+    </:col>
+    <:col :let={bet} label="Volume">
+      ℂ<%= CcaCollegeBetting.Payout.currency_formatted(bet.volume / 100) %>
+    </:col>
+    <:col :let={bet} label="Profit">
+      <%= case bet.market.resolution do %>
+        <% nil -> %>
+          Awaiting Resolution
+        <% :rejected -> %>
+          <span class="font-black text-red-600 font-display">
+            -ℂ<%= CcaCollegeBetting.Payout.currency_formatted(bet.volume / 100) %>
+          </span>
+        <% :accepted -> %>
+          <span class="font-black text-green-600 font-display">+ℂ<%= CcaCollegeBetting.Payout.currency_formatted((bet.payout - bet.volume) / 100) %></span>
+        <% :withdrawn -> %>
+          <span class="font-black text-black font-display">ℂ0</span>
+      <% end %>
+    </:col>
+  </.table>
+<% end %>

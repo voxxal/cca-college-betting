@@ -6,7 +6,7 @@ defmodule CcaCollegeBettingWeb.ProfileController do
   def show(conn, %{"user_id" => user_id}) do
     # TODO this is querying user twice, this can be optimized out.
     user =
-      Accounts.get_user!(user_id) |> Repo.preload(whitelist: :member, markets: [:college, :user])
+      Accounts.get_user!(user_id) |> Repo.preload(whitelist: :member)
 
     me =
       if conn.assigns.current_user do
@@ -18,6 +18,7 @@ defmodule CcaCollegeBettingWeb.ProfileController do
 
 
     if Accounts.accepted(user, conn.assigns.current_user) do
+      user = user |> Repo.preload(markets: [:college, :user], bets: [market: [:college, :user]])
       render(conn, :show, user: user, me: me)
     else
       render(conn, :private,
